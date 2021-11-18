@@ -38,30 +38,34 @@ var (
 
 func main() {
 	hash = "$2a$10$C96TnfOQ56XQsnxHJTkji.XLVKr.rIerZIHxnfeKh5/RIMQvNp6Ve"
-	router.POST("/login", Login)
-	log.Fatal(router.Run(":9080"))
+	router.POST("/login", login)
+	log.Fatal(router.Run(":8080"))
+
 }
-func Login(c *gin.Context) {
+func login(c *gin.Context) {
 	var u User
 	hashByte := []byte(hash)
 	if err := c.ShouldBindJSON(&u); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, "Invalid json provided")
 		return
 	}
+
 	passwordByte := []byte(u.Password)
 	error := bcrypt.CompareHashAndPassword(hashByte, passwordByte)
+
 	if user.Username != u.Username || error != nil {
 		c.JSON(http.StatusUnauthorized, "Please provide valid login details")
 		return
 	}
-	token, err := CreateToken(user.ID)
+	token, err := createToken(user.ID)
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 		return
 	}
 	c.JSON(http.StatusOK, token)
 }
-func CreateToken(userid uint64) (string, error) {
+
+func createToken(userid uint64) (string, error) {
 	var err error
 	os.Setenv("ACCESS_SECRET", "")
 	atClaims := jwt.MapClaims{}
