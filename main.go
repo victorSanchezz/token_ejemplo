@@ -37,13 +37,12 @@ var (
 )
 
 func main() {
-
+	hash = "$2a$10$C96TnfOQ56XQsnxHJTkji.XLVKr.rIerZIHxnfeKh5/RIMQvNp6Ve"
 	router.POST("/login", Login)
 	log.Fatal(router.Run(":9080"))
 }
 func Login(c *gin.Context) {
 	var u User
-	hash = "$2a$10$C96TnfOQ56XQsnxHJTkji.XLVKr.rIerZIHxnfeKh5/RIMQvNp6Ve"
 	hashByte := []byte(hash)
 	if err := c.ShouldBindJSON(&u); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, "Invalid json provided")
