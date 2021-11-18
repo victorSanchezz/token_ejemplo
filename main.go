@@ -8,17 +8,8 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 )
-
-var (
-	router = gin.Default()
-)
-
-func main() {
-
-	router.POST("/login", Login)
-	log.Fatal(router.Run(":8082"))
-}
 
 type User struct {
 	ID       uint64 `json:"id"`
@@ -40,13 +31,27 @@ var user = User{
 	Phone:    "1234567890",
 }
 
+var (
+	router = gin.Default()
+	hash   string
+)
+
+func main() {
+
+	router.POST("/login", Login)
+	log.Fatal(router.Run(":9080"))
+}
 func Login(c *gin.Context) {
 	var u User
+	hash = "$2a$10$C96TnfOQ56XQsnxHJTkji.XLVKr.rIerZIHxnfeKh5/RIMQvNp6Ve"
+	hashByte := []byte(hash)
 	if err := c.ShouldBindJSON(&u); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, "Invalid json provided")
 		return
 	}
-	if user.Username != u.Username || user.Password != u.Password {
+	passwordByte := []byte(u.Password)
+	error := bcrypt.CompareHashAndPassword(hashByte, passwordByte)
+	if user.Username != u.Username || error != nil {
 		c.JSON(http.StatusUnauthorized, "Please provide valid login details")
 		return
 	}
@@ -57,7 +62,6 @@ func Login(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, token)
 }
-
 func CreateToken(userid uint64) (string, error) {
 	var err error
 	os.Setenv("ACCESS_SECRET", "")
