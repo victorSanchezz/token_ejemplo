@@ -11,6 +11,7 @@ type User struct {
 }
 
 var Hash = "$2a$10$C96TnfOQ56XQsnxHJTkji.XLVKr.rIerZIHxnfeKh5/RIMQvNp6Ve"
+
 var User1 = User{
 	ID:       1,
 	Username: "username",

@@ -11,6 +11,8 @@ import (
 
 var User = estructura.User1
 var hash = estructura.Hash
+var Token string
+var err error
 
 func Login(c *gin.Context) {
 	var u estructura.User
@@ -22,15 +24,17 @@ func Login(c *gin.Context) {
 
 	passwordByte := []byte(u.Password)
 	error := bcrypt.CompareHashAndPassword(hashByte, passwordByte)
-
 	if User.Username != u.Username || error != nil {
 		c.JSON(http.StatusUnauthorized, "Please provide valid login details")
 		return
 	}
-	token, err := token.CreateToken(User.ID)
+
+	Token, err = token.CreateToken(User.ID)
+
 	if err != nil {
 		c.JSON(http.StatusUnprocessableEntity, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, token)
+	c.JSON(http.StatusOK, Token)
+
 }

@@ -1,19 +1,20 @@
 package main
 
 import (
-	"jwt-todo/estructura"
 	"jwt-todo/login"
 	"log"
+
+	"jwt-todo/token2"
 
 	"github.com/gin-gonic/gin"
 )
 
 var (
 	router = gin.Default()
-	User   = estructura.User1
 )
 
 func main() {
 	router.POST("/login", login.Login)
+	router.POST("/welcome", token2.TokenValid)
 	log.Fatal(router.Run(":8080"))
 }
